@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4 shadow p-4 bg-white rounded">
+    <h4>Confirm Delete</h4>
+
+    {% if is_used %}
+        <div class="alert alert-danger">
+            <strong>Warning:</strong> This Grade is currently in use and cannot be deleted.
+        </div>
+        <a href="{% url 'grade_index' %}" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left-circle"></i> Back</a>
+    {% else %}
+        <p>Are you sure you want to delete <strong>{{ grade.GRADEDESC }}</strong>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-check-circle"></i> Yes, Delete</button>
+            <a href="{% url 'grade_index' %}" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left-circle"></i> Cancel</a>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <h4>Edit Employee</h4>
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ form.CATENAME.id_for_label }}">
+                    {{ form.CATENAME.label }}
+                    {% if form.CATENAME.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.CATENAME }}
+            </div>
+            <div class="col-md-12 p-2">
+                {{ form.CATEADDR1.label_tag }} {{ form.CATEADDR1 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATEADDR2.label_tag }} {{ form.CATEADDR2 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATEADDR3.label_tag }} {{ form.CATEADDR3 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATEADDR4.label_tag }} {{ form.CATEADDR4 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATEADDR5.label_tag }} {{ form.CATEADDR5 }}
+            </div>
+
+            <div class="col-md-6 p-2">
+                {{ form.CATEACCNO.label_tag }} {{ form.CATEACCNO }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATEUANNO.label_tag }} {{ form.CATEUANNO }}
+            </div>
+            <div class="col-md-4 p-2">
+                {{ form.CATEPANNO.label_tag }} {{ form.CATEPANNO }}
+            </div>
+            <div class="col-md-4 p-2">
+                {{ form.CATEEMPPF.label_tag }} {{ form.CATEEMPPF }}
+            </div>
+            <div class="col-md-4 p-2">
+                {{ form.CATEESINO.label_tag }} {{ form.CATEESINO }}
+            </div>
+
+            <div class="col-md-4 p-2">
+                <label for="{{ form.DEPTID.id_for_label }}">
+                    {{ form.DEPTID.label }}
+                    {% if form.DEPTID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.DEPTID }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ form.DSGNID.id_for_label }}">
+                    {{ form.DSGNID.label }}
+                    {% if form.DSGNID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.DSGNID }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ form.GRADEID.id_for_label }}">
+                    {{ form.GRADEID.label }}
+                    {% if form.GRADEID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.GRADEID }}
+            </div>
+            <div class="col-md-8 p-2">
+                {{ form.CATEQDESC.label_tag }} {{ form.CATEQDESC }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ form.CATEQTYPE.id_for_label }}">
+                    {{ form.CATEQTYPE.label }}
+                    {% if form.CATEQTYPE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.CATEQTYPE }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATECODE.label_tag }} {{ form.CATECODE }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.CATEUTYPE.id_for_label }}">
+                    {{ form.CATEUTYPE.label }}
+                    {% if form.CATEUTYPE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.CATEUTYPE }}
+            </div>
+
+            <div class="col-md-6 p-2">
+                <label for="{{ form.SBRNCHID.id_for_label }}">
+                    {{ form.SBRNCHID.label }}
+                    {% if form.SBRNCHID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.SBRNCHID }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.PFDATE.label_tag }} {{ form.PFDATE }}
+            </div>
+
+            <div class="col-md-12 mt-4">
+                <h3 class="border-bottom pb-2">Previous Employment Details</h3>
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATEPHN1.label_tag }} {{ form.CATEPHN1 }}
+            </div>
+            <div class="col-md-12 p-2">
+                {{ form.CATEREASON.label_tag }} {{ form.CATEREASON }}
+            </div>
+
+            <div class="col-md-12 mt-4">
+                <h3 class="border-bottom pb-2">Other Details 1</h3>
+            </div>
+
+            <div class="col-md-6 p-2">
+                <label for="{{ form.CATESEX.id_for_label }}">
+                    {{ form.CATESEX.label }}
+                    {% if form.CATESEX.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.CATESEX }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.CATEMSTATUS.id_for_label }}">
+                    {{ form.CATEMSTATUS.label }}
+                    {% if form.CATEMSTATUS.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.CATEMSTATUS }}
+            </div>
+            <div class="col-md-4 p-2">
+                {{ form.CATEDOB.label_tag }} {{ form.CATEDOB }}
+            </div>
+
+            <div class="col-md-4 p-2">
+                {{ form.CATEAPPDT.label_tag }} {{ form.CATEAPPDT }}
+            </div>
+            <div class="col-md-4 p-2">
+                {{ form.CATECNDT.label_tag }} {{ form.CATECNDT }}
+            </div>
+            <div class="col-md-12 p-2">
+                <label for="{{ form.BLDGID.id_for_label }}">
+                    {{ form.BLDGID.label }}
+                    {% if form.BLDGID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.BLDGID }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ form.CATEGTYPE.id_for_label }}">
+                    {{ form.CATEGTYPE.label }}
+                    {% if form.CATEGTYPE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.CATEGTYPE }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ form.CATEMTYPE.id_for_label }}">
+                    {{ form.CATEMTYPE.label }}
+                    {% if form.CATEMTYPE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.CATEMTYPE }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ form.CATEATYPE.id_for_label }}">
+                    {{ form.CATEATYPE.label }}
+                    {% if form.CATEATYPE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.CATEATYPE }}
+            </div>
+
+            <div class="col-md-6 p-2">
+                <label for="{{ form.DISPSTATUS.id_for_label }}">
+                    {{ form.DISPSTATUS.label }}
+                    {% if form.DISPSTATUS.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.DISPSTATUS }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATERDATE.label_tag }} {{ form.CATERDATE }}
+            </div>
+            <div class="col-md-12 p-2">
+                {{ form.REASON.label_tag }} {{ form.REASON }}
+            </div>
+
+
+            <div class="col-md-12 mt-4">
+                <h3 class="border-bottom pb-2">Other Details 2</h3>
+            </div>
+
+            <div class="col-md-12 p-2">
+                {{ form.CATEGNAME.label_tag }} {{ form.CATEGNAME }}
+            </div>
+
+            <div class="col-md-6 p-2">
+                {{ form.CATEPHN2.label_tag }} {{ form.CATEPHN2 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATEPHN3.label_tag }} {{ form.CATEPHN3 }}
+            </div>
+            <div class="col-md-12 p-2">
+                <label for="{{ form.GRELMID.id_for_label }}">
+                    {{ form.GRELMID.label }}
+                    {% if form.GRELMID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>{{ form.GRELMID }}
+            </div>
+            <div class="col-md-12 p-2">
+                {{ form.CATEIDESC.label_tag }} {{ form.CATEIDESC }}
+            </div>
+                        <div class="col-md-6 p-2">
+                {{ form.CATELICNO.label_tag }} {{ form.CATELICNO }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATEAADHARNO.label_tag }} {{ form.CATEAADHARNO }}
+            </div>
+
+            {% comment %} <div class="col-md-6 p-2">
+                {{ form.CATEMAIL.label_tag }} {{ form.CATEMAIL }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATEPHN4.label_tag }} {{ form.CATEPHN4 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.CATECNAME.label_tag }} {{ form.CATECNAME }}
+            </div> {% endcomment %}
+        </div>
+        <button type="submit" class="btn btn-warning btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Update
+        </button>
+        <a href="{% url 'employee_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

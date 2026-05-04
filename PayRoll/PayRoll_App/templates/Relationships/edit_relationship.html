@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>Edit Relationship</h4>
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ form.RELMDESC.id_for_label }}">
+                    {{ form.RELMDESC.label }}
+                    {% if form.RELMDESC.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.RELMDESC }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.RELMCODE.id_for_label }}">
+                    {{ form.RELMCODE.label }}
+                    {% if form.RELMCODE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.RELMCODE }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.DISPSTATUS.label_tag }} {{ form.DISPSTATUS }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-warning btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Update
+        </button>
+        <a href="{% url 'relationship_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

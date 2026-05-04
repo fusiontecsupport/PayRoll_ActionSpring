@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid mt-4">
+    {% if messages %}
+    <div class="mt-3">
+        {% for user_message in messages %}
+        <div class="alert alert-{{ user_message.tags }} alert-dismissible fade show" role="alert">
+            {{ user_message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <h4>Add Payroll</h4>
+    <form method="post" id="payroll-form" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="row">
+            {% if used_month_ids %}
+                {# Already passed from view #}
+            {% endif %}
+
+            <!-- Date -->
+            <div class="col-md-2 p-2">
+                <label for="{{ form.PRMDATE.id_for_label }}">
+                    {{ form.PRMDATE.label }}
+                    {% if form.PRMDATE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.PRMDATE }}
+            </div>
+
+            <div class="col-md-6 p-2">
+            </div>
+
+            <!-- Company (frontend-only dropdown) -->
+            <div class="col-md-6 p-2">
+                <label for="company">Organization name <span class="text-danger">*</span></label>
+                <select name="company" class="form-control" required>
+                    <option value="">--- Please Select ---</option>
+                    {% for company in companies %}
+                        <option value="{{ company.COMPID }}">{{ company.COMPNAME }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Subbranch -->
+            <div class="col-md-6 p-2">
+                <label for="{{ form.SBRNCHID.id_for_label }}">
+                    {{ form.SBRNCHID.label }}
+                    {% if form.SBRNCHID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.SBRNCHID }}
+            </div>
+
+             <!-- Accounting Year -->
+             <div class="col-md-2 p-2">
+                <label for="{{ form.COMPYID.id_for_label }}">
+                    {{ form.COMPYID.label }}
+                    {% if form.COMPYID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.COMPYID }}
+            </div>
+
+            <!-- Month -->
+            <div class="col-md-2 p-2">
+                <label for="id_MONTHID">Month <span class="text-danger">*</span></label>
+                <select name="MONTHID" id="id_MONTHID" class="form-control" required>
+                    {% for value, label in form.fields.MONTHID.choices %}
+                        {% if value %}
+                            <option value="{{ value }}" data-month-id="{{ value }}">{{ label }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>            
+            </div>
+
+            <!-- From Date -->
+            <div class="col-md-2 p-2">
+                <label for="{{ form.PRMSDATE.id_for_label }}">
+                    {{ form.PRMSDATE.label }}
+                    {% if form.PRMSDATE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.PRMSDATE }}
+            </div>
+
+            <!-- Till Date -->
+            <div class="col-md-2 p-2">
+                <label for="{{ form.PRMEDATE.id_for_label }}">
+                    {{ form.PRMEDATE.label }}
+                    {% if form.PRMEDATE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.PRMEDATE }}
+            </div>
+
+            <!-- Working Days -->
+            <div class="col-md-2 p-2">
+                <label for="{{ form.WRKDAYS.id_for_label }}">
+                    {{ form.WRKDAYS.label }}
+                    {% if form.WRKDAYS.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.WRKDAYS }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-sm mt-3">
+            <i class="bi bi-gear"></i> Generate
+        </button>
+        <a href="{% url 'payroll_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const branchSelect = document.getElementById('id_SBRNCHID');
+        const monthSelect = document.getElementById('id_MONTHID');
+    
+        branchSelect.addEventListener('change', function () {
+            const branchId = this.value;
+            if (!branchId) return;
+    
+            fetch(`/ajax/get-generated-months/?branch_id=${branchId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const usedMonths = data.used_months.map(String);
+    
+                    Array.from(monthSelect.options).forEach(option => {
+                        if (!option.value) return;
+    
+                        const originalLabel = option.textContent.replace(' (Generated)', '');
+                        const optionMonthId = option.getAttribute('data-month-id');
+    
+                        if (usedMonths.includes(optionMonthId)) {
+                            option.disabled = true;
+                            option.textContent = `${originalLabel} (Generated)`;
+                        } else {
+                            option.disabled = false;
+                            option.textContent = originalLabel;
+                        }
+                    });
+                })
+                .catch(err => console.error('Failed to fetch used months:', err));
+        });
+    });
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        const yearField = document.getElementById('id_COMPYID');
+        const sessionYearId = "{{ accounting_year_id }}";
+    
+        if (yearField && sessionYearId) {
+            yearField.value = sessionYearId;
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const companySelect = document.querySelector('select[name="company"]');
+        const subbranchSelect = document.getElementById('subbranch');
+    
+        companySelect.addEventListener('change', function () {
+            const companyId = this.value;
+    
+            // Reset subbranch options
+            subbranchSelect.innerHTML = '<option value="">--- Please Select ---</option>';
+    
+            if (companyId) {
+                fetch(`/ajax/get-subbranches/?company_id=${companyId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.subbranches.forEach(subbranch => {
+                            const option = document.createElement('option');
+                            option.value = subbranch.id;
+                            option.textContent = subbranch.name;
+                            subbranchSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching subbranches:', error));
+            }
+        });
+    });
+
+    function dispOrderToCalendarMonth(dispOrder) {
+        const mapping = {
+            1: 3,   // April
+            2: 4,   // May
+            3: 5,   // June
+            4: 6,   // July
+            5: 7,   // August
+            6: 8,   // September
+            7: 9,   // October
+            8: 10,  // November
+            9: 11,  // December
+            10: 0,  // January
+            11: 1,  // February
+            12: 2   // March
+        };
+        return mapping[dispOrder] ?? null;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const monthField = document.getElementById('id_MONTHID');
+        const yearField = document.getElementById('id_COMPYID');
+        const fromDateField = document.getElementById('id_PRMSDATE');
+        const tillDateField = document.getElementById('id_PRMEDATE');
+        const workingDaysField = document.getElementById('id_WRKDAYS');
+        const prDateField = document.getElementById('id_PRMDATE');
+    
+        function dispOrderToCalendarMonth(dispOrder) {
+            return (dispOrder >= 1 && dispOrder <= 12) ? dispOrder - 1 : null;
+        }
+    
+        function updateDates() {
+            const monthVal = parseInt(monthField.value);
+            const yearVal = yearField.options[yearField.selectedIndex]?.text;
+    
+            if (!monthVal || !yearVal) return;
+    
+            const monthIndex = dispOrderToCalendarMonth(monthVal);
+            const yearParts = yearVal.split('-');
+            let year = parseInt(yearParts[0]);
+    
+            if (monthIndex >= 0 && monthIndex <= 2) {
+                year = parseInt(yearParts[1]); // Jan-Mar → next year
+            }
+    
+            const fromDate = new Date(year, monthIndex, 1);
+            const tillDate = new Date(year, monthIndex + 1, 0);
+    
+            const formatDate = (date) => {
+                const dd = String(date.getDate()).padStart(2, '0');
+                const mm = String(date.getMonth() + 1).padStart(2, '0');
+                const yyyy = date.getFullYear();
+                return `${yyyy}-${mm}-${dd}`;
+            };
+    
+            fromDateField.value = formatDate(fromDate);
+            tillDateField.value = formatDate(tillDate);
+            prDateField.value = formatDate(tillDate);
+            workingDaysField.value = tillDate.getDate();
+        }
+    
+        monthField.addEventListener('change', updateDates);
+        yearField.addEventListener('change', updateDates);
+        
+        // ✅ Run once on load
+        updateDates();
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const branchSelect = document.getElementById('subbranch');      // Current branch select
+        const monthSelect = document.getElementById('id_MONTHID');
+        const yearSelect = document.getElementById('id_COMPYID');       // Accounting year select
+
+        if (!branchSelect || !monthSelect || !yearSelect) return;
+
+        function updateUsedMonths() {
+            const branchId = branchSelect.value;
+            const accountingYearId = yearSelect.value;
+
+            if (!branchId || !accountingYearId) return;
+
+            fetch(`/ajax/get-generated-months/?branch_id=${branchId}&accounting_year_id=${accountingYearId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const usedMonths = data.used_months.map(String);
+
+                    Array.from(monthSelect.options).forEach(option => {
+                        if (!option.value) return;
+
+                        const originalLabel = option.textContent.replace(' (Generated)', '');
+                        const isUsed = usedMonths.includes(option.value);
+
+                        option.disabled = isUsed;
+                        option.textContent = isUsed ? `${originalLabel} (Generated)` : originalLabel;
+                    });
+                })
+                .catch(err => console.error('Failed to fetch used months:', err));
+        }
+
+        // Event listeners
+        branchSelect.addEventListener('change', updateUsedMonths);
+        yearSelect.addEventListener('change', updateUsedMonths);
+
+        // Auto-trigger if values are pre-filled
+        if (branchSelect.value && yearSelect.value) {
+            updateUsedMonths();
+        }
+    });
+</script>
+{% endblock %}
+    

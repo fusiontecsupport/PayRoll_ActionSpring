@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>Edit Leave Head</h4>
+
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+
+        <!-- Master Form Fields -->
+        <div class="row">
+            <div class="col-md-6 p-2">
+                {{ master_form.LHMDESC.label_tag }} {{ master_form.LHMDESC }}
+            </div>
+            <div class="col-md-3 p-2">
+                {{ master_form.LHMCODE.label_tag }} {{ master_form.LHMCODE }}
+            </div>
+            <div class="col-md-4 p-2">
+                {{ master_form.LHMCTYPE.label_tag }} {{ master_form.LHMCTYPE }}
+            </div>
+            <div class="col-md-4 p-2">
+                {{ master_form.GNDRID.label_tag }} {{ master_form.GNDRID }}
+            </div>
+            <div class="col-md-4 p-2">
+                {{ master_form.DISPSTATUS.label_tag }} {{ master_form.DISPSTATUS }}
+            </div>
+        </div>
+
+        <hr>
+
+        <h5 class="mt-4">Leave Head Details</h5>
+
+        <!-- Add Row Button -->
+        <button type="button" class="btn btn-success btn-sm add-form-row mb-2">
+            <i class="bi bi-plus"></i> Add Row
+        </button>
+
+        <!-- Management Form -->
+        {{ detail_formset.management_form }}
+
+        <!-- Formset Table -->
+        <table class="table table-bordered table-striped shadow p-4 rounded bg-white">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center align-middle" style="width: 30%;">Designation</th>
+                    <th class="text-center align-middle" style="width: 15%;">NOD/YEAR</th>
+                    <th class="text-center align-middle" style="width: 15%;">MAX/YEAR</th>
+                    <th class="text-center align-middle" style="width: 20%;">LIMIT/YEAR</th>
+                    <th class="text-center align-middle" style="width: 5%;">Delete</th>
+                </tr>
+            </thead>
+            <tbody id="formset-body">
+                {% for form in detail_formset %}
+                    <tr class="formset-row">
+                        {{ form.LHDID }}
+                        <td>{{ form.DSGNID }}</td>
+                        <td>{{ form.LHDNOD }}</td>
+                        <td>{{ form.LHDMNOD }}</td>
+                        <td>{{ form.LHDLNOD }}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm remove-form-row">
+                                <i class="bi bi-dash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Submit and Cancel Buttons -->
+        <button type="submit" class="btn btn-warning btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Update
+        </button>
+        <a href="{% url 'leavehead_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+
+<!-- Hidden Empty Form Template -->
+<table style="display: none;">
+    <tbody>
+        <tr id="empty-form" class="formset-row">
+            {{ detail_formset.empty_form.id }}
+            <td>{{ detail_formset.empty_form.DSGNID }}</td>
+            <td>{{ detail_formset.empty_form.LHDNOD }}</td>
+            <td>{{ detail_formset.empty_form.LHDMNOD }}</td>
+            <td>{{ detail_formset.empty_form.LHDLNOD }}</td>
+            <td>
+                <!-- Ensure DELETE checkbox is present -->
+                {{ detail_formset.empty_form.DELETE }}
+                <button type="button" class="btn btn-danger btn-sm remove-form-row">
+                    <i class="bi bi-dash"></i>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addButton = document.querySelector('.add-form-row');
+        const formsetBody = document.getElementById('formset-body');
+        const totalFormsInput = document.querySelector('[name="form-TOTAL_FORMS"]');
+        const emptyFormTemplate = document.getElementById('empty-form');
+
+        // Update input names and IDs for new form fields
+        function updateElementIndex(element, index) {
+            if (element.name) {
+                element.name = element.name.replace(/form-(\d+)-/, `form-${index}-`);
+            }
+            if (element.id) {
+                element.id = element.id.replace(/form-(\d+)-/, `form-${index}-`);
+            }
+        }
+
+        addButton.addEventListener('click', function () {
+            const formCount = parseInt(totalFormsInput.value);  // Get the current total form count
+            const newRow = emptyFormTemplate.cloneNode(true);    // Clone the empty form template
+            newRow.classList.add('formset-row');
+            newRow.removeAttribute('id');
+            newRow.style.display = '';  // Make the new row visible
+        
+            // Update form fields for the newly added row
+            const inputs = newRow.querySelectorAll('input, select, textarea');
+            inputs.forEach(function (input) {
+                updateElementIndex(input, formCount);  // Update the input field names and IDs
+                if (input.type !== 'hidden') {
+                    input.value = '';  // Clear values for new row
+                }
+            });
+        
+            formsetBody.appendChild(newRow);  // Add the new row to the formset
+            totalFormsInput.value = formCount + 1;  // Increment the form count
+        });
+        
+
+        // Remove Row Button
+        formsetBody.addEventListener('click', function (e) {
+            if (e.target.closest('.remove-form-row')) {
+                const row = e.target.closest('tr');
+                const deleteCheckbox = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+                
+                if (deleteCheckbox) {
+                    // Mark the row for deletion
+                    deleteCheckbox.checked = true;
+                    row.style.display = 'none';  // Hide the row
+                } else {
+                    row.remove();  // Fallback if there's no delete checkbox
+                }
+
+                // Update total form count after deletion
+                const rows = formsetBody.querySelectorAll('.formset-row');
+                totalFormsInput.value = rows.length;
+
+                // Reindex the remaining rows
+                rows.forEach(function (row, index) {
+                    const inputs = row.querySelectorAll('input, select, textarea');
+                    inputs.forEach(function (input) {
+                        updateElementIndex(input, index);
+                    });
+                });
+            }
+        });
+    });
+</script>  
+{% endblock %}

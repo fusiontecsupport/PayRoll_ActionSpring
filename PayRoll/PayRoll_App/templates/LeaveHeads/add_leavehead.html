@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>Add Leave Head</h4>
+
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ master_form.LHMDESC.id_for_label }}">
+                    {{ master_form.LHMDESC.label }}
+                    {% if master_form.LHMDESC.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ master_form.LHMDESC }}
+            </div>
+            <div class="col-md-3 p-2">
+                <label for="{{ master_form.LHMCODE.id_for_label }}">
+                    {{ master_form.LHMCODE.label }}
+                    {% if master_form.LHMCODE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ master_form.LHMCODE }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ master_form.LHMCTYPE.id_for_label }}">
+                    {{ master_form.LHMCTYPE.label }}
+                    {% if master_form.LHMCTYPE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ master_form.LHMCTYPE }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ master_form.GNDRID.id_for_label }}">
+                    {{ master_form.GNDRID.label }}
+                    {% if master_form.GNDRID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ master_form.GNDRID }}
+            </div>
+            <div class="col-md-4 p-2">
+                {{ master_form.DISPSTATUS.label_tag }} {{ master_form.DISPSTATUS }}
+            </div>
+        </div>
+
+        <hr>
+
+        <h5 class="mt-4">Leave Head Details</h5>
+        {{ detail_formset.management_form }}
+
+        <button type="button" class="btn btn-success btn-sm add-form-row mb-3">
+            <i class="bi bi-plus"></i> Add Row
+        </button>
+
+        <table class="table table-bordered table-striped shadow p-4 rounded bg-white">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center align-middle" style="width: 30%;">Designation <span style="color: red;">*</span></th>
+                    <th class="text-center align-middle" style="width: 15%;">NOD/YEAR <span style="color: red;">*</span></th>
+                    <th class="text-center align-middle" style="width: 15%;">MAX/YEAR <span style="color: red;">*</span></th>
+                    <th class="text-center align-middle" style="width: 20%;">LIMIT/YEAR <span style="color: red;">*</span></th>
+                    <th class="text-center align-middle" style="width: 5%;">Delete</th>
+                </tr>
+            </thead>
+            <tbody id="formset-body">
+                {% for form in detail_formset %}
+                    <tr>
+                        <td>{{ form.DSGNID }}</td>
+                        <td>{{ form.LHDNOD }}</td>
+                        <td>{{ form.LHDMNOD }}</td>
+                        <td>{{ form.LHDLNOD }}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm remove-form-row">
+                                <i class="bi bi-dash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-success btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Save
+        </button>
+        <a href="{% url 'leavehead_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addButton = document.querySelector('.add-form-row');
+        const formsetBody = document.getElementById('formset-body');
+
+        function getTotalFormsInput() {
+            return document.querySelector('[name$="TOTAL_FORMS"]');
+        }
+
+        function updateRemoveButtons() {
+            formsetBody.querySelectorAll('tr').forEach((row) => {
+                let removeBtn = row.querySelector('.remove-form-row');
+                if (!removeBtn) {
+                    const td = row.lastElementChild;
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'btn btn-danger btn-sm remove-form-row';
+                    button.innerHTML = '<i class="bi bi-dash"></i>';
+                    td.appendChild(button);
+                }
+            });
+        }
+
+        addButton.addEventListener('click', () => {
+            const totalFormsInput = getTotalFormsInput();
+            let formCount = parseInt(totalFormsInput.value);
+
+            const templateRow = formsetBody.querySelector('tr');
+            if (!templateRow) {
+                console.error('No row found to clone!');
+                return;
+            }
+
+            const newRow = templateRow.cloneNode(true);
+            newRow.querySelectorAll('input, select').forEach((el) => {
+                if (!el || !el.name) return;
+
+                const name = el.name.replace(/\d+/, formCount);
+                el.name = name;
+                el.id = 'id_' + name;
+
+                if (el.tagName.toLowerCase() === 'select') {
+                    el.selectedIndex = 0;
+                } else {
+                    el.value = '';
+                }
+            });
+
+            // Clean up delete button and reattach to ensure consistency
+            const deleteCell = newRow.lastElementChild;
+            deleteCell.innerHTML = '';
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'btn btn-danger btn-sm remove-form-row';
+            removeButton.innerHTML = '<i class="bi bi-dash"></i>';
+            deleteCell.appendChild(removeButton);
+
+            formsetBody.appendChild(newRow);
+            totalFormsInput.value = formsetBody.children.length;
+
+            updateRemoveButtons();
+            updateDropdownOptions();
+        });
+
+        formsetBody.addEventListener('click', function (e) {
+            if (e.target.closest('.remove-form-row')) {
+                const row = e.target.closest('tr');
+                if (formsetBody.children.length > 1) {
+                    row.remove();
+                    const totalFormsInput = getTotalFormsInput();
+                    totalFormsInput.value = formsetBody.children.length;
+                    updateRemoveButtons();
+                    updateDropdownOptions();
+                }
+            }
+        });
+
+        formsetBody.addEventListener('change', function (e) {
+            if (e.target.tagName.toLowerCase() === 'select') {
+                updateDropdownOptions();
+            }
+        });
+
+        updateRemoveButtons();
+        updateDropdownOptions();
+    });
+</script>
+
+{% endblock %}

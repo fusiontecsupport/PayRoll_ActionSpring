@@ -1,0 +1,49 @@
+{% extends 'partials/modal_base.html' %}
+{% load dict_filters %}
+
+{% block content %}
+<div class="modal-header bg-light">
+    <h5 class="modal-title fw-semibold mb-0">
+        {{ employee_name }}
+        {% if designation_name %}
+            <small class="text-muted d-block" style="font-size: 0.85rem;">{{ designation_name }}</small>
+        {% endif %}
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-dialog modal-dialog-centered d-flex flex-column" style="max-width: 400px;">
+
+    <!-- Table 1: Tax/Payhead Details -->
+    <table class="table table-hover table-sm border shadow-sm rounded mb-3">
+        <thead class="table-light text-center">
+            <tr>
+                <th class="text-start text-nowrap">Taxes</th>
+                <th class="text-end text-nowrap">Net Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in payhead_details %}
+            <tr>
+                <td class="text-start text-nowrap">{{ payhead_map|dict_get:item.PAYHID }}</td>
+                <td class="text-end text-nowrap">{{ item.PRHNAMT|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Table 2: Net Pay -->
+    <table class="table table-sm border shadow-sm rounded">
+        <thead class="table-light text-center">
+            <tr>
+                <th class="text-end text-nowrap text-success">NET PAY</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-end fw-bold fs-5 text-success">₹ {{ payroll_detail.PRD_NPAMT|floatformat:2 }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load pagination_tags %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="mb-3">
+        <h2 class="mb-0">States</h2>
+
+        <form method="GET" class="mt-2">
+            <div class="input-group">
+                <input type="text" name="search" value="{{ search_query }}" class="form-control form-control" placeholder="Search State">
+                <button type="submit" class="btn btn-secondary btn-sm">🔍</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="input-group mt-3" style="width: 150px;">
+                    <label class="input-group-text" for="per_page">Show</label>
+                    <select name="per_page" id="per_page" class="form-select" onchange="this.form.submit()">
+                        <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+                        <option value="20" {% if per_page == 20 %}selected{% endif %}>20</option>
+                        <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+                    </select>
+                </div>
+                
+                <a href="{% url 'add_state' %}" class="btn btn-success btn-sm mt-2">+ Add New</a>
+            </div>
+        </form>
+    </div>
+
+    <table class="table table-bordered shadow p-4 bg-light rounded">
+        <thead>
+            <tr>
+                <th class="text-center align-middle" style="width: 15%;">State Code</th>
+                <th class="text-center align-middle" style="width: 35%;">State Name</th>
+                <th class="text-center align-middle" style="width: 24%;">State Type</th>
+                <th class="text-center align-middle" style="width: 15%;">Status</th>
+                <th class="text-center align-middle" style="width: 11%;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for state in states %}
+            <tr>
+                <td>{{ state.STATECODE }}</td>
+                <td>{{ state.STATEDESC }}</td>
+                <td>{{ state.get_STATETYPE_display }}</td>
+                <td>{{ state.get_DISPSTATUS_display }}</td>
+                <td>
+                    <a href="{% url 'edit_state' state.STATEID %}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                    <a href="{% url 'delete_state' state.STATEID %}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center align-middle">No States found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <nav aria-label="Pagination">
+        <ul class="pagination justify-content-center pagination-sm mb-0">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{{ query_string }}">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ query_string }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">First</span></li>
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+    
+            <li class="page-item disabled">
+                <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            </li>
+    
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ query_string }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{{ query_string }}">Last</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+                <li class="page-item disabled"><span class="page-link">Last</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

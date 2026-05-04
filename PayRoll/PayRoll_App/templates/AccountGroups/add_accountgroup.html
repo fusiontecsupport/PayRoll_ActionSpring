@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>Add Account Group</h4>
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ form.ACHEADGDESC.id_for_label }}">
+                    {{ form.ACHEADGDESC.label }}
+                    {% if form.ACHEADGDESC.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.ACHEADGDESC }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.ACHEADGCODE.id_for_label }}">
+                    {{ form.ACHEADGCODE.label }}
+                    {% if form.ACHEADGCODE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.ACHEADGCODE }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.DISPSTATUS.label_tag }} {{ form.DISPSTATUS }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Save
+        </button>
+        <a href="{% url 'accountgroup_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

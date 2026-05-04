@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block content %}
+<div class="container mt-4">
+    <div class="mb-3">
+        <h2 class="mb-0">Slabs</h2>
+
+        <form method="GET" class="mt-2">
+            <div class="input-group">
+                <input type="text" name="search" value="{{ search_query }}" class="form-control form-control" placeholder="Search Slab Date">
+                <button type="submit" class="btn btn-secondary btn-sm">🔍</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="input-group mt-3" style="width: 150px;">
+                    <label class="input-group-text" for="per_page">Show</label>
+                    <select name="per_page" id="per_page" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="10" {% if per_page|default:10 == 10 %}selected{% endif %}>10</option>
+                        <option value="20" {% if per_page == 20 %}selected{% endif %}>20</option>
+                        <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+                    </select>
+                </div>
+                
+                <form method="GET" action="">
+                    <div class="row g-2 align-items-end m-2">
+                        <div class="col-auto">
+                            <label for="branch_id" class="form-label mb-0">Select Branch</label>
+                            <select name="branch_id" id="branch_id" class="form-control form-control-sm">
+                                <option value="">--- Please Select ---</option>
+                                {% for branch in branches %}
+                                    <option value="{{ branch.SBRNCHID }}" {% if branch.SBRNCHID == selected_branch_id %}selected{% endif %}>
+                                        {{ branch.SBRNCHNAME }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-funnel"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <a href="{% url 'add_slab' %}" class="btn btn-success btn-sm mt-2">+ Add New</a>
+            </div>
+        </form>
+    </div>
+
+    {% comment %} <!-- Branch Dropdown -->
+    <form method="get" action="">
+        <div class="form-group row mb-3">
+            <label for="branch_id" class="col-form-label col-sm-2">Select Branch:</label>
+            <div class="col-sm-6">
+                <select name="branch_id" id="branch_id" class="form-control">
+                    <option value="">--- Please Select ---</option>
+                    {% for branch in branches %}
+                        <option value="{{ branch.SBRNCHID }}" {% if branch.SBRNCHID == selected_branch_id %}selected{% endif %}>
+                            {{ branch.SBRNCHNAME }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <button type="submit" class="btn btn-primary btm-sm"><i class="bi bi-funnel"></i></button>
+            </div>
+        </div>
+    </form> {% endcomment %}
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped shadow p-4 rounded bg-white">
+            <thead>
+                <tr>
+                    <th class="text-center align-middle" style="width: 10%;">Date</th>
+                    <th class="text-center align-middle" style="width: 10%;">Employee Name</th>
+                    <th class="text-center align-middle" style="width: 15%;">Branch</th>
+                    <th class="text-center align-middle" style="width: 10%;">Basic</th>
+                    <th class="text-center align-middle" style="width: 10%;">HRA</th>
+                    <th class="text-center align-middle" style="width: 10%;">O.Allow</th>
+                    <th class="text-center align-middle" style="width: 10%;">PF</th>
+                    <th class="text-center align-middle" style="width: 10%;">ESI</th>
+                    <th class="text-center align-middle" style="width: 10%;">W.Allow</th>
+                    <th class="text-center align-middle" style="width: 5%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for slab in slab_index %}
+                <tr>
+                    <td>{{ slab.SLABMDATE|date:"d-M-Y" }}</td>
+                    <td>{{ category_map|dict_get:slab.CATEID }}</td>
+                    <td>{{ branch_map|dict_get:slab.BRNCHID }}</td>
+                    <td>{{ slab.BAMT }}</td>
+                    <td>{{ slab.HRAAMT }}</td>
+                    <td>{{ slab.OAMT }}</td>
+                    <td>{{ slab.PFEXPRN }}</td>
+                    <td>{{ slab.ESIEXPRN }}</td>
+                    <td>{{ slab.WAMT }}</td>
+                    <td>
+                        <a href="{% url 'delete_slab' slab.pk %}" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="text-center">No Slabs found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <nav aria-label="Pagination">
+        <ul class="pagination justify-content-center pagination-sm mb-0">
+
+            {% if slab_index.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{{ query_string }}">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ slab_index.previous_page_number }}{{ query_string }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">First</span></li>
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            <li class="page-item disabled">
+                <span class="page-link">Page {{ slab_index.number }} of {{ slab_index.paginator.num_pages }}</span>
+            </li>
+
+            {% if slab_index.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ slab_index.next_page_number }}{{ query_string }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ slab_index.paginator.num_pages }}{{ query_string }}">Last</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+                <li class="page-item disabled"><span class="page-link">Last</span></li>
+            {% endif %}
+
+        </ul>
+    </nav>
+</div>
+{% endblock %}
+

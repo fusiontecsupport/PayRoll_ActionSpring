@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <h4>Add Company</h4>
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ form.COMPNAME.id_for_label }}">
+                    {{ form.COMPNAME.label }}
+                    {% if form.COMPNAME.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.COMPNAME }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.COMPDNAME.id_for_label }}">
+                    {{ form.COMPDNAME.label }}
+                    {% if form.COMPDNAME.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.COMPDNAME }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.COMPADDR1.id_for_label }}">
+                    {{ form.COMPADDR1.label }}
+                    {% if form.COMPADDR1.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.COMPADDR1 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.COMPADDR2.label_tag }} {{ form.COMPADDR2 }}
+            </div>
+            <div class="col-md-12 p-2">
+                <label for="{{ form.COMPLOCTDESC.id_for_label }}">
+                    {{ form.COMPLOCTDESC.label }}
+                    {% if form.COMPLOCTDESC.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.COMPLOCTDESC }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.COMPPINCODE.id_for_label }}">
+                    {{ form.COMPPINCODE.label }}
+                    {% if form.COMPPINCODE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.COMPPINCODE }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.STATEID.id_for_label }}">
+                    {{ form.STATEID.label }}
+                    {% if form.STATEID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.STATEID }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.COMPPHN1.label_tag }} {{ form.COMPPHN1 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.COMPPHN2.label_tag }} {{ form.COMPPHN2 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.COMPPHN3.label_tag }} {{ form.COMPPHN3 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.COMPPHN4.label_tag }} {{ form.COMPPHN4 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.COMPMAIL.label_tag }} {{ form.COMPMAIL }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.COMPCPRSN.label_tag }} {{ form.COMPCPRSN }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.COMPGSTNO.label_tag }} {{ form.COMPGSTNO }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.COMPWEBSITE.label_tag }} {{ form.COMPWEBSITE }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.COMPPANNO.label_tag }} {{ form.COMPPANNO }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.COMPCODE.id_for_label }}">
+                    {{ form.COMPCODE.label }}
+                    {% if form.COMPCODE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.COMPCODE }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.DISPSTATUS.label_tag }} {{ form.DISPSTATUS }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Save
+        </button>
+        <a href="{% url 'company_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

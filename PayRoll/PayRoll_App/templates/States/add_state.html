@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4 mb-4">
+    <h2>Add State</h2>
+    <form method="POST" class="shadow p-4 rounded bg-white">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 p-2"> 
+                <label for="{{ form.STATECODE.id_for_label }}">
+                    {{ form.STATECODE.label }}
+                    {% if form.STATECODE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{form.STATECODE }}
+            </div>
+
+            <div class="col-md-6 p-2"> 
+                <label for="{{ form.STATEDESC.id_for_label }}">
+                    {{ form.STATEDESC.label }}
+                    {% if form.STATEDESC.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{form.STATEDESC }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 p-2"> 
+                <label for="{{ form.STATETYPE.id_for_label }}">
+                    {{ form.STATETYPE.label }}
+                    {% if form.STATETYPE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{form.STATETYPE }}
+            </div>
+
+            <div class="col-md-6 p-2"> 
+                {{ form.DISPSTATUS.label_tag }} {{ form.DISPSTATUS }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Save
+        </button>
+        <a href="{% url 'state_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Payroll Report</h2>
+    
+    <form method="GET" class="mb-4" id="payrollForm">
+        <div class="row g-3">
+            <!-- Branch Dropdown -->
+            <div class="col-md-6">
+                <label class="form-label">Branch</label>
+                <select name="branch_id" class="form-select" id="branchSelect">
+                    <option value="">All Branches</option>
+                    {% for branch in branches %}
+                        <option value="{{ branch.0 }}" {% if branch.0|stringformat:"s" == selected_branch %}selected{% endif %}>
+                            {{ branch.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Period Dropdown (only shown if branch selected) -->
+            <div class="col-md-6" id="periodContainer" {% if not selected_branch %}style="display:none;"{% endif %}>
+                <label class="form-label">Payroll Period</label>
+                <select name="prm_id" class="form-select" id="periodSelect">
+                    <option value="">Select Period</option>
+                    {% for period in periods %}
+                        <option value="{{ period.0 }}" {% if period.0|stringformat:"s" == selected_prm_id %}selected{% endif %}>
+                            {{ period.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <!-- Download Button (shown only when period is selected) -->
+        <div class="mt-3" id="downloadContainer" {% if not selected_prm_id %}style="display:none;"{% endif %}>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-download"></i> Download Excel Report
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const branchSelect = document.getElementById('branchSelect');
+    const periodContainer = document.getElementById('periodContainer');
+    const periodSelect = document.getElementById('periodSelect');
+    const downloadContainer = document.getElementById('downloadContainer');
+    const form = document.getElementById('payrollForm');
+
+    // Handle branch selection
+    branchSelect.addEventListener('change', function() {
+        // Show loading indicator if needed
+        if (this.value) {
+            // Submit form to get periods for selected branch
+            form.action = "{% url 'payroll_report' %}";  // Make sure to use your actual URL name
+            form.submit();
+        } else {
+            // If "All Branches" selected, hide period dropdown
+            periodContainer.style.display = 'none';
+            downloadContainer.style.display = 'none';
+        }
+    });
+
+    // Handle period selection
+    periodSelect.addEventListener('change', function() {
+        if (this.value) {
+            downloadContainer.style.display = 'block';
+        } else {
+            downloadContainer.style.display = 'none';
+        }
+    });
+
+    // Handle form submission for download
+    form.addEventListener('submit', function(e) {
+        // Only intercept if we have a period selected (download case)
+        if (periodSelect.value) {
+            e.preventDefault();
+            // Change form action to download URL
+            form.action = "{% url 'generate_payroll_excel' %}";  // Use your actual URL name
+            // Submit to download
+            form.submit();
+        }
+    });
+});
+</script>
+{% endblock %}

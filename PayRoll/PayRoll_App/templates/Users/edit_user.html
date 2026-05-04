@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>Edit User</h4>
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ form.first_name.id_for_label }}">
+                    {{ form.first_name.label }}
+                    {% if form.first_name.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                    <span class="text-danger">*</span>
+                </label>
+                {{ form.first_name }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.last_name.label_tag }} {{ form.last_name }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.username.id_for_label }}">
+                    {{ form.username.label }}
+                    {% if form.username.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.username }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.email.id_for_label }}">
+                    {{ form.email.label }}
+                    {% if form.email.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                    <span class="text-danger">*</span>
+                </label>
+                {{ form.email }}
+            </div>
+            <div class="col-md-12 p-2">
+                {{ form.mobile.label_tag }} {{ form.mobile }}
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="form-check">
+                    {{ form.is_superuser }}
+                    <label class="form-check-label" for="{{ form.is_superuser.id_for_label }}">
+                        {{ form.is_superuser.label }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="form-check">
+                    {{ form.is_staff }}
+                    <label class="form-check-label" for="{{ form.is_staff.id_for_label }}">
+                        {{ form.is_staff.label }}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-warning btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Update
+        </button>
+        <a href="{% url 'user_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

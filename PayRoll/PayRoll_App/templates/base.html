@@ -1,0 +1,347 @@
+{% load static %}
+{% load pagination_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payroll</title>
+    <!-- Favicons -->
+    <link href="{% static 'images/payroll.png' %}" rel="icon">
+    <link href="{% static 'images/payroll.png' %}" rel="apple-touch-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <style>
+        .navbar-nav .dropdown-menu {
+            margin-top: 0;
+        }
+
+        .skyblue-link {
+            color: skyblue;
+        }
+
+        .underline {
+            text-decoration: underline;
+        }
+
+        #loader-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loader-content {
+            text-align: center;
+            color: white;
+            font-family: sans-serif;
+        }
+        
+        .gear-icon {
+            font-size: 60px;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loader-text {
+            font-size: 24px;
+            margin-top: 15px;
+        }
+        
+        .dots::after {
+            content: '';
+            display: inline-block;
+            animation: dots 1.2s steps(3, end) infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes dots {
+            0% { content: ''; }
+            33% { content: '.'; }
+            66% { content: '..'; }
+            100% { content: '...'; }
+        }    
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'images/payroll.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-top">
+            Payroll
+        </a>
+
+        <!-- Toggle button for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navigation Items -->
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Payroll Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="payrollDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Payroll
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="payrollDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'attendance_index' %}">
+                                <i class="bi bi-person-exclamation"></i> Attendance
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'payroll_index' %}">
+                                <i class="bi bi-cash-coin"></i> Payroll
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Reports Dropdown (Side-by-side) -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Reports
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'payroll_print_index' %}">
+                                <i class="bi bi-credit-card"></i> Payslip
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'payroll_report' %}">
+                                <i class="bi bi-newspaper"></i> Payroll Receipt
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ms-auto">
+                <!-- Masters Menu -->
+                {% if request.user.is_superuser or request.user.is_staff %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="mastersDropdown" role="button" data-bs-toggle="dropdown">
+                        Masters
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end p-2" style="width: 500px;">
+                        <div class="row">
+                            <div class="col-6">
+                                <h6 class="dropdown-header underline">Master Data</h6>
+                                <li><a class="dropdown-item" href="{% url 'department_index' %}"><i class="bi bi-diagram-3"></i> Departments</a></li>
+                                <li><a class="dropdown-item" href="{% url 'designation_index' %}"><i class="bi bi-person-badge"></i> Designations</a></li>
+                                <li><a class="dropdown-item" href="{% url 'state_index' %}"><i class="bi bi-compass"></i> States</a></li>
+                                <li><a class="dropdown-item" href="{% url 'company_index' %}"><i class="bi bi-building-check"></i> Companies</a></li>
+                                <li><a class="dropdown-item" href="{% url 'grade_index' %}"><i class="bi bi-123"></i> Grades</a></li>
+                                <h6 class="dropdown-header">Master Data</h6>
+                                <li><a class="dropdown-item" href="{% url 'advancetype_index' %}"><i class="bi bi-bank"></i> Advance Types</a></li>
+                                <li><a class="dropdown-item" href="{% url 'bloodgroup_index' %}"><i class="bi bi-droplet"></i> Blood Groups</a></li>
+                                <li><a class="dropdown-item" href="{% url 'relationship_index' %}"><i class="bi bi-person-plus"></i> Relationships</a></li>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="dropdown-header underline">Accounts & HR</h6>
+                                <li><a class="dropdown-item" href="{% url 'accountgroup_index' %}"><i class="bi bi-person-vcard"></i> Account Groups</a></li>
+                                <li><a class="dropdown-item" href="{% url 'accounthead_index' %}"><i class="bi bi-person-vcard-fill"></i> Account Heads</a></li>
+                                <li><a class="dropdown-item" href="{% url 'location_index' %}"><i class="bi bi-geo-alt"></i> Locations</a></li>
+                                <li><a class="dropdown-item" href="{% url 'payheadtype_index' %}"><i class="bi bi-currency-rupee"></i> Payhead Types</a></li>
+                                <li><a class="dropdown-item" href="{% url 'payhead_index' %}"><i class="bi bi-paypal"></i> Pay Heads</a></li>
+                                <li><a class="dropdown-item" href="{% url 'leavehead_index' %}"><i class="bi bi-card-heading"></i> Leave Heads</a></li>
+                                <li><a class="dropdown-item" href="{% url 'subbranch_index' %}"><i class="bi bi-buildings"></i> Sub Branches</a></li>
+                                <li><a class="dropdown-item" href="{% url 'employee_index' %}"><i class="bi bi-person-lock"></i> Employees</a></li>
+                                <li><a class="dropdown-item" href="{% url 'slab_index' %}"><i class="bi bi-database-slash"></i> Slabs</a></li>
+                            </div>
+                        </div>
+                    </ul>
+                </li>
+                {% endif %}
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle me-1"> {{ request.user.username }}</i>
+                    </a>                        
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'user_index' %}"><i class="bi bi-person-gear"></i> Manage Users</a>
+                        </li>
+                        <li>
+                            <form action="{% url 'admin:logout' %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button class="dropdown-item" type="submit">
+                                    <i class="bi bi-box-arrow-left"></i> Logout
+                                </button>
+                            </form>                            
+                        </li>
+                    </ul>
+                </li>
+             <!-- <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>  -->
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-grow-1 pt-5">
+    <div class="container mt-3">
+        {% block content %}
+        {% endblock %}
+    </div>
+</main>
+
+<!-- footer -->
+<div class="custom-footer bg-dark text-white py-3 mt-5">
+    <div class="container d-flex justify-content-between align-items-center">
+        <small>
+            &copy; {{ current_year|default:2025 }} Payroll. Design and Developed by
+            <a href="https://fusiontecsoftware.com/" class="skyblue-link" target="_blank" rel="noopener noreferrer">Fusiontec</a> All rights reserved.
+        </small>
+        <small class="text-end">
+            FY {{ current_financial_year }}
+        </small>
+    </div>
+</div>
+
+
+<!-- Loader Overlay HTML -->
+<div id="loader-overlay" style="display:none;">
+    <div class="loader-content">
+        <div class="gear-icon">&#9881;</div>
+        <div class="loader-text">
+            Generating<span id="dot-animation"></span><br>
+            <small>Please wait...</small>
+        </div>
+    </div>
+</div>
+
+
+<!-- Loader CSS -->
+<style>
+    #loader-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1050;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: white;
+        font-family: Arial, sans-serif;
+        font-size: 1.5rem;
+    }
+
+    .loader-content {
+        text-align: center;
+    }
+
+    .gear-icon {
+        font-size: 4rem;
+        animation: spin 1.5s linear infinite;
+        margin-bottom: 10px;
+    }
+
+    .loader-text .dots::after {
+        content: '';
+        display: inline-block;
+        width: 0.8em;
+        text-align: left;
+        animation: dots 1s steps(4, end) infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg);}
+        100% { transform: rotate(360deg);}
+    }
+
+    @keyframes dots {
+        0%, 20% { content: ''; }
+        40% { content: '.'; }
+        60% { content: '..'; }
+        80%, 100% { content: '...'; }
+    }
+</style>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- Payroll Modal -->
+<div class="modal fade" id="payrollModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content" id="modal-content-area">
+    </div>
+  </div>
+</div>
+
+<!-- Your script here -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.view-payroll-btn').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-url');
+
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('modal-content-area').innerHTML = html;
+                        new bootstrap.Modal(document.getElementById('payrollModal')).show();
+                    });
+            });
+        });
+    });
+
+
+
+
+
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const loader = document.getElementById('loader-overlay');
+        loader.style.display = 'flex';
+    });
+
+
+
+
+    // Dot animation logic
+    let dotInterval;
+    function animateDots() {
+        const dotElement = document.getElementById('dot-animation');
+        if (!dotElement) return;
+        let dots = '';
+        dotInterval = setInterval(() => {
+            dots = dots.length < 3 ? dots + '.' : '';
+            dotElement.innerText = dots;
+        }, 500);
+    }
+
+    // Attach only when the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('payroll-form');
+        if (form) {
+            form.addEventListener('submit', function () {
+                const overlay = document.getElementById('loader-overlay');
+                if (overlay) {
+                    overlay.style.display = 'flex';
+                    animateDots();
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

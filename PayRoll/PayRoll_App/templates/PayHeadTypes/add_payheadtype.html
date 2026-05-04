@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>Add Payhead Type</h4>
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ form.PAYHTDESC.id_for_label }}">
+                    {{ form.PAYHTDESC.label }}
+                    {% if form.PAYHTDESC.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.PAYHTDESC }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.PAYHTCODE.id_for_label }}">
+                    {{ form.PAYHTCODE.label }}
+                    {% if form.PAYHTCODE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.PAYHTCODE }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.DISPSTATUS.label_tag }} {{ form.DISPSTATUS }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Save
+        </button>
+        <a href="{% url 'payheadtype_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>Edit Payhead</h4>
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ form.PAYHDESC.id_for_label }}">
+                    {{ form.PAYHDESC.label }}
+                    {% if form.PAYHDESC.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.PAYHDESC }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.PAYHCODE.id_for_label }}">
+                    {{ form.PAYHCODE.label }}
+                    {% if form.PAYHCODE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.PAYHCODE }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.PAYHTID.id_for_label }}">
+                    {{ form.PAYHTID.label }}
+                    {% if form.PAYHTID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.PAYHTID }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.DISPORDER.id_for_label }}">
+                    {{ form.DISPORDER.label }}
+                    {% if form.DISPORDER.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.DISPORDER }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.DISPSTATUS.label_tag }} {{ form.DISPSTATUS }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-warning btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Update
+        </button>
+        <a href="{% url 'payhead_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

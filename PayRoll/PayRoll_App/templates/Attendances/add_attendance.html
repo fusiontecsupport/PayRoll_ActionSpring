@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    {% if error_message %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ error_message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+  
+    <h4>Add Attendance</h4>
+    
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ form.ATTNDATE.id_for_label }}">
+                    {{ form.ATTNDATE.label }}
+                    {% if form.ATTNDATE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.ATTNDATE }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.SBRNCHID.id_for_label }}">
+                    {{ form.SBRNCHID.label }}
+                    {% if form.SBRNCHID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.SBRNCHID }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.ECATEID.id_for_label }}">
+                    {{ form.ECATEID.label }}
+                    {% if form.ECATEID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.ECATEID }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="designationField">Designation</label>
+                <input type="text" id="designationField" class="form-control" placeholder="Designation" readonly>
+            </div>
+            <div class="col-md-12 mt-4">
+                <h3 class="border-bottom pb-2">Values</h3>
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.OTAMT.id_for_label }}">
+                    {{ form.OTAMT.label }}
+                    {% if form.OTAMT.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.OTAMT }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.INCAMT.id_for_label }}">
+                    {{ form.INCAMT.label }}
+                    {% if form.INCAMT.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.INCAMT }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.ATTNNOD.id_for_label }}">
+                    {{ form.ATTNNOD.label }}
+                    {% if form.ATTNNOD.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.ATTNNOD }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.ABAMT.id_for_label }}">
+                    {{ form.ABAMT.label }}
+                    {% if form.ABAMT.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.ABAMT }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.TEAAMT.id_for_label }}">
+                    {{ form.TEAAMT.label }}
+                    {% if form.TEAAMT.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.TEAAMT }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.FOODAMT.id_for_label }}">
+                    {{ form.FOODAMT.label }}
+                    {% if form.FOODAMT.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.FOODAMT }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.ODAMT.id_for_label }}">
+                    {{ form.ODAMT.label }}
+                    {% if form.ODAMT.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.ODAMT }}
+            </div>
+        </div>
+        <div class="d-flex justify-content-between mt-3">
+            <div>
+                <a href="{% url 'attendance_index' %}" class="btn btn-secondary btn-sm">
+                    <i class="bi bi-arrow-left-circle"></i> Cancel
+                </a>
+            </div>
+            <div>
+                <button type="submit" name="save" class="btn btn-success btn-sm me-2">
+                    <i class="bi bi-check-circle"></i> Save
+                </button>
+                <button type="submit" name="save_and_continue" class="btn btn-primary btn-sm">
+                    <i class="bi bi-save"></i> Save and Continue
+                </button>
+            </div>
+        </div>
+    </form>
+    <hr class="my-5">
+
+    <h5>Recent Attendance Records</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>S.No</th>
+                    <th>Date</th>
+                    <th>Employee</th>
+                    <th>Absent</th>
+                    <th>Overtime(OT)</th>
+                    <th>Increment</th>
+                    <th>Bonus</th>
+                    <th>Tea</th>
+                    <th>Food</th>
+                    <th>O.Ded</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for att in attendance_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ att.ATTNDATE|date:"d/m/Y" }}</td>
+                    <td>{{ employee_dict|dict_get:att.ECATEID }}</td>
+                    <td>{{ att.ATTNNOD }}</td>
+                    <td>{{ att.OTAMT }}</td>
+                    <td>{{ att.INCAMT }}</td>
+                    <td>{{ att.ABAMT }}</td>
+                    <td>{{ att.TEAAMT }}</td>
+                    <td>{{ att.FOODAMT }}</td>
+                    <td>{{ att.ODAMT }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="text-center">No attendance records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if messages %}
+    <div class="mt-3">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+    </div>
+{% endif %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<input type="hidden" id="selectedEmpId" value="{{ form.ECATEID.value|default:'' }}">
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const empSelect = document.getElementById("id_ECATEID");
+        const designationField = document.getElementById("designationField");
+
+        empSelect.addEventListener("change", function () {
+            const empId = this.value;
+            designationField.value = '';
+
+            if (empId) {
+                fetch(`/get-designation/${empId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        designationField.value = data.designation || '';
+                    })
+                    .catch(err => {
+                        console.error("Fetch error:", err);
+                    });
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        function loadEmployees(branchId, selectedEmpId = null) {
+            var url = "{% url 'ajax_load_employees' %}";
+
+            $.ajax({
+                url: url,
+                data: {
+                    'branch_id': branchId
+                },
+                success: function (data) {
+                    let $employeeSelect = $('#id_ECATEID');
+                    $employeeSelect.empty();
+                    $employeeSelect.append('<option value="">--- Please Select ---</option>');
+                    $.each(data, function (index, item) {
+                        const selected = item.CATEID == selectedEmpId ? 'selected' : '';
+                        $employeeSelect.append('<option value="' + item.CATEID + '" ' + selected + '>' + item.CATENAME + '</option>');
+                    });
+
+                    // Trigger designation fetch after loading if employee is selected
+                    if (selectedEmpId) {
+                        $('#id_ECATEID').trigger('change');
+                    }
+                }
+            });
+        }
+
+        const $branchSelect = $('#id_SBRNCHID');
+        const initialBranchId = $branchSelect.val();
+        const initialEmpId = $('#selectedEmpId').val();  // ✅ get from hidden input
+
+        $branchSelect.change(function () {
+            const branchId = $(this).val();
+            loadEmployees(branchId);
+        });
+
+        // Load employees if we have an initial branch selected
+        if (initialBranchId) {
+            loadEmployees(initialBranchId, initialEmpId);
+        }
+    });
+</script>
+
+{% endblock %}

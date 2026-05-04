@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <h4>Add Slab</h4>
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <input type="hidden" name="compyid" value="{{ compyid }}">
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ form.SLABMDATE.id_for_label }}">
+                    {{ form.SLABMDATE.label }}
+                    {% if form.SLABMDATE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.SLABMDATE }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.BRNCHID.id_for_label }}">
+                    {{ form.BRNCHID.label }}
+                    {% if form.BRNCHID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.BRNCHID }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.CATEID.id_for_label }}">
+                    {{ form.CATEID.label }}
+                    {% if form.CATEID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.CATEID }}
+            </div>
+            <div class="col-md-12 mt-4">
+                <h3 class="border-bottom pb-2">Values</h3>
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.BAMT.id_for_label }}">
+                    {{ form.BAMT.label }}
+                    {% if form.BAMT.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.BAMT }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.HRAAMT.id_for_label }}">
+                    {{ form.HRAAMT.label }}
+                    {% if form.HRAAMT.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.HRAAMT }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.OAMT.id_for_label }}">
+                    {{ form.OAMT.label }}
+                    {% if form.OAMT.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.OAMT }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.PFEXPRN.id_for_label }}">
+                    {{ form.PFEXPRN.label }}
+                    {% if form.PFEXPRN.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.PFEXPRN }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.ESIEXPRN.id_for_label }}">
+                    {{ form.ESIEXPRN.label }}
+                    {% if form.ESIEXPRN.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.ESIEXPRN }}
+            </div>
+            <div class="col-md-2 p-2">
+                <label for="{{ form.WAMT.id_for_label }}">
+                    {{ form.WAMT.label }}
+                    {% if form.WAMT.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.WAMT }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Save
+        </button>
+        <a href="{% url 'slab_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#id_BRNCHID').change(function () {
+            const branchId = $(this).val();
+            const url = "{% url 'ajax_load_employees' %}"; // Replace with your actual URL name if different
+
+            $.ajax({
+                url: url,
+                data: {
+                    'branch_id': branchId
+                },
+                success: function (data) {
+                    let $employee = $('#id_CATEID');
+                    $employee.empty();
+                    $employee.append('<option value="">--- Please Select ---</option>');
+                    $.each(data, function (index, item) {
+                        $employee.append(`<option value="${item.CATEID}">${item.CATENAME}</option>`);
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
+

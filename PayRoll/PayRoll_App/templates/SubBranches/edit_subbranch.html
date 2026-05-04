@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <h4>Edit Sub Branch</h4>
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 p-2">
+                <label for="{{ form.COMPID.id_for_label }}">
+                    {{ form.COMPID.label }}
+                    {% if form.COMPID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.COMPID }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.SBRNCHNAME.id_for_label }}">
+                    {{ form.SBRNCHNAME.label }}
+                    {% if form.SBRNCHNAME.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.SBRNCHNAME }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.SBRNCHADDR1.id_for_label }}">
+                    {{ form.SBRNCHADDR1.label }}
+                    {% if form.SBRNCHADDR1.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.SBRNCHADDR1 }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.SBRNCHADDR2.label_tag }} {{ form.SBRNCHADDR2 }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ form.SBRNCHLOCTDESC.id_for_label }}">
+                    {{ form.SBRNCHLOCTDESC.label }}
+                    {% if form.SBRNCHLOCTDESC.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.SBRNCHLOCTDESC }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ form.STATEID.id_for_label }}">
+                    {{ form.STATEID.label }}
+                    {% if form.STATEID.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.STATEID }}
+            </div>
+            <div class="col-md-4 p-2">
+                <label for="{{ form.SBRNCHPINCODE.id_for_label }}">
+                    {{ form.SBRNCHPINCODE.label }}
+                    {% if form.SBRNCHPINCODE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.SBRNCHPINCODE }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.SBRNCHGSTNO.label_tag }} {{ form.SBRNCHGSTNO }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.SBRNCHPANNO.label_tag }} {{ form.SBRNCHPANNO }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.SBRNCHWEBSITE.label_tag }} {{ form.SBRNCHWEBSITE }}
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="{{ form.SBRNCHCODE.id_for_label }}">
+                    {{ form.SBRNCHCODE.label }}
+                    {% if form.SBRNCHCODE.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ form.SBRNCHCODE }}
+            </div>
+            <div class="col-md-6 p-2">
+                {{ form.DISPSTATUS.label_tag }} {{ form.DISPSTATUS }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-warning btn-sm mt-3">
+            <i class="bi bi-check-circle"></i> Update
+        </button>
+        <a href="{% url 'subbranch_index' %}" class="btn btn-secondary btn-sm mt-3">
+            <i class="bi bi-arrow-left-circle"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

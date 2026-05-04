@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block content %}
+<div class="container mt-4">
+    <div class="mb-3">
+        <h2 class="mb-0">Locations</h2>
+
+        <form method="GET" class="mt-2">
+            <div class="input-group">
+                <input type="text" name="search" value="{{ search_query }}" class="form-control form-control" placeholder="Search Location">
+                <button type="submit" class="btn btn-secondary btn-sm">🔍</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="input-group mt-3" style="width: 150px;">
+                    <label class="input-group-text" for="per_page">Show</label>
+                    <select name="per_page" id="per_page" class="form-select" onchange="this.form.submit()">
+                        <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+                        <option value="20" {% if per_page == 20 %}selected{% endif %}>20</option>
+                        <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+                    </select>
+                </div>
+                
+                <a href="{% url 'add_location' %}" class="btn btn-success btn-sm mt-2">+ Add New</a>
+            </div>
+        </form>
+    </div>
+
+    <table class="table table-bordered table-striped shadow p-4 rounded bg-white">
+        <thead>
+            <tr>
+                <th class="text-center align-middle" style="width: 10%;">Code</th>
+                <th class="text-center align-middle" style="width: 30%;">Description</th>
+                <th class="text-center align-middle" style="width: 20%;">State</th>
+                <th class="text-center align-middle" style="width: 30%;">Status</th>
+                <th class="text-center align-middle" style="width: 10%;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for location in location_index %}
+            <tr>
+                <td>{{ location.LOCTCODE }}</td>
+                <td>{{ location.LOCTDESC }}</td>
+                <td>{{ states|dict_get:location.STATEID }}</td>
+                <td>{{ location.get_DISPSTATUS_display }}</td>
+                <td>
+                    <a href="{% url 'edit_location' location.pk %}" class="btn btn-sm btn-warning"><i class="bi bi-pencil-fill"></i></a>
+                    <a href="{% url 'delete_location' location.pk %}" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center;">No Locations found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <nav aria-label="Invoice Pagination" class="mt-4">
+        <ul class="pagination justify-content-center pagination-sm">
+    
+            <!-- First & Previous -->
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{{ query_string }}" aria-label="First">
+                    <span aria-hidden="true">First</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ query_string }}" aria-label="Previous">
+                    <span aria-hidden="true">Previous</span>
+                </a>
+            </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">First</span></li>
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+    
+            <!-- Current Page Indicator -->
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+    
+            <!-- Next & Last -->
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ query_string }}" aria-label="Next">
+                    <span aria-hidden="true">Next</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{{ query_string }}" aria-label="Last">
+                    <span aria-hidden="true">Last</span>
+                </a>
+            </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+                <li class="page-item disabled"><span class="page-link">Last</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}
+
